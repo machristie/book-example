@@ -37,7 +37,7 @@ class ItemValidationTest(FunctionalTest):
 
         # She receives a similar warning on the list page
         self.wait_for_row_in_list_table('1: Buy milk')
-        error = self.browser.find_element_by_css_selector('.has-error')
+        error = WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.has-error')))
         self.assertEqual(error.text, "You can't have an empty list item")
 
         # And she can correct it by filling some text in
