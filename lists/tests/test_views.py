@@ -1,14 +1,35 @@
+import re
+
+from django.http.request import HttpRequest
+from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.html import escape
+from lists.forms import ItemForm
 from lists.models import Item, List
+from lists.views import home_page
 
 
 class HomePageTest(TestCase):
+    maxDiff = None
 
     def test_uses_home_template(self):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
+    def test_home_page_returns_correct_html(self):
+        request = HttpRequest()
+        response = home_page(request)
+        expected_html = render_to_string('home.html', {'form': ItemForm()}, request=request)
+        # TODO: csrf token isn't the same so this assert fails
+        self.assertMultiLineEqual(re.sub(r'<input.*csrf.*\/>', '', response.content.decode()), re.sub(r'<input.*csrf.*\/>', '', expected_html))
+
+    def test_home_page_renders_home_template(self):
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'home.html')
+
+    def test_home_page_uses_item_form(self):
+        response = self.client.get('/')
+        self.assertIsInstance(response.context['form'], ItemForm)
 
 
 class NewListTest(TestCase):
