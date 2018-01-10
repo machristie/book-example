@@ -3,3 +3,4 @@ __pycache__
 db.sqlite3
 geckodriver.log
 node_modules
+.venv
